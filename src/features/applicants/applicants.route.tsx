@@ -9,76 +9,34 @@ import ParItem from '../participants/Participants/ParItem'
 import Card from '../../common/components/Card/Card'
 import Button from '../../common/components/Button/Button'
 import InterviewNotesUI from '../participants/Participants/InterviewNotesUI'
-import axios from 'axios'
 import { useAppSelector } from '../../app/typings'
 import { selectAuth } from '../auth/authSlice'
-
+import useApplicants from './applicants.hooks'
+import { updateStatus } from './fetchers.utils'
 const ApplicantsRoute = () => {
-  const [search, setSearch] = useState<string>('')
-  const [committees, setCommittees] = useState<string[]>([])
-  const originalData = useRef<any[]>([])
-  const [filteredData, setFilteredData] = useState<any[]>([])
+  const {
+    filteredData,
+    search,
+    setSearch,
+    committees,
+    setCommittee,
+    setStatus,
+    originalData,
+  } = useApplicants()
   const [chosenApplicant, setChosenApplicant] = useState<any>()
-  const [committee, setCommittee] = useState<string>('All')
-  const [status, setStatus] = useState<string>('All')
   const { token } = useAppSelector(selectAuth)
-  useEffect(() => {
-    const fetchApplicants = async () => {
-      try {
-        const response = await axios.get(
-          'https://semicolon-backend.onrender.com/applicant'
-        )
-        setFilteredData(response.data.data)
-        originalData.current = response.data.data
-      } catch (e) {}
-    }
-    const fetchCommittees = async () => {
-      try {
-        const response = await axios.get(
-          'https://semicolon-backend.onrender.com/committee'
-        )
-        setCommittees(response.data.data.map((item: any) => item.title))
-      } catch (e) {}
-    }
-    fetchApplicants()
-    fetchCommittees()
-  }, [])
-  useEffect(() => {
-    let temp = originalData.current
-    if (search) {
-      temp = temp.filter((item) => {
-        return (
-          item.name.toLowerCase().includes(search.toLowerCase()) ||
-          item.phone.toLowerCase().includes(search.toLowerCase())
-        )
-      })
-    }
-    if (committee !== 'All') {
-      temp = temp.filter((item) => {
-        return item.first_preference === committee
-      })
-    }
-    if (status !== 'All') {
-      temp = temp.filter((item) => {
-        return item.acceptanceStatus === status
-      })
-    }
-    setFilteredData(temp)
-  }, [search, committee, status])
   const statusChangeHandler = async (status: StatusEnum) => {
-    try {
-      await axios.patch(
-        `https://semicolon-backend.onrender.com/applicant/${chosenApplicant?._id}`,
-        { acceptanceStatus: status },
-        { headers: { Authorization: 'Berar ' + token } }
-      )
-      setChosenApplicant({ ...chosenApplicant, acceptanceStatus: status })
-      originalData.current = originalData.current.map((item) =>
-        item._id === chosenApplicant?._id
-          ? { ...item, acceptanceStatus: status }
-          : item
-      )
-    } catch (e) {}
+    const successed = await updateStatus(status, chosenApplicant?._id, token)
+    if (!successed) {
+      alert('Something went wrong')
+      return
+    }
+    setChosenApplicant({ ...chosenApplicant, acceptanceStatus: status })
+    originalData.current = originalData.current.map((item) =>
+      item._id === chosenApplicant?._id
+        ? { ...item, acceptanceStatus: status }
+        : item
+    )
   }
   return (
     <Card className={participantClasses['par-container']}>
