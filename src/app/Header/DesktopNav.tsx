@@ -59,6 +59,9 @@ const DesktopNav = () => {
         <li>
           <Link to="/participants">Participants</Link>
         </li>
+        <li>
+          <Link to="/applicants">Applicants</Link>
+        </li>
       </ul>
     </nav>
   )

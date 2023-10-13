@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from './typings'
 import { useEffect } from 'react'
 import { fetchParticipants } from '../features/participants/participantSlice'
 import { loadSavedLogin, selectAuth } from '../features/auth/authSlice'
+import ApplicantsRoute from '../features/applicants/applicants.route'
 
 function App() {
   const nav = useNavigate()
@@ -43,6 +44,15 @@ function App() {
           <>
             <Header />
             <Participants />
+          </>
+        }
+      />
+      <Route
+        path="/applicants"
+        element={
+          <>
+            <Header />
+            <ApplicantsRoute />
           </>
         }
       />

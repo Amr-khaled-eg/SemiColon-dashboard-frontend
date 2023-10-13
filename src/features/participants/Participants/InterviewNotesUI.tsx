@@ -7,9 +7,14 @@ import { saveParticipantInterviewNotes } from '../participantSlice'
 interface InterviewNotesUIProps {
   data?: InterviewObject
   _id: string
+  link: string
 }
 
-export default function InterviewNotesUI({ data, _id }: InterviewNotesUIProps) {
+export default function InterviewNotesUI({
+  data,
+  _id,
+  link,
+}: InterviewNotesUIProps) {
   const dispatch = useAppDispatch()
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -42,7 +47,9 @@ export default function InterviewNotesUI({ data, _id }: InterviewNotesUIProps) {
     }
 
     if (confirm('Are you sure you want to submit the interview notes?')) {
-      dispatch(saveParticipantInterviewNotes({ id: _id, interviewData }))
+      dispatch(
+        saveParticipantInterviewNotes({ id: _id, interviewData, link: link })
+      )
     }
   }
 

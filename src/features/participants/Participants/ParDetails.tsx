@@ -67,7 +67,11 @@ const ParDetails = () => {
         </div>
       </div>
       <hr className={classes.line}></hr>
-      <InterviewNotesUI data={par.InterviewerNote} _id={par._id} />
+      <InterviewNotesUI
+        data={par.InterviewerNote}
+        _id={par._id}
+        link="https://semicolon-registration-backend.onrender.com/participants/interview/note"
+      />
       <hr className={classes.line}></hr>
       <div className={classes.buttons}>
         <Button

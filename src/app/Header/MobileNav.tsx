@@ -67,6 +67,9 @@ const MobileNav = () => {
               Participants
             </Link>
           </li>
+          <li>
+            <Link to="/applicants">Applicants</Link>
+          </li>
         </ul>
         <div>
           <Link to="/login" onClick={onModalClose}>
