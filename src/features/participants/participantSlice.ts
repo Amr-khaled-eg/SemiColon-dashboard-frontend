@@ -93,8 +93,7 @@ export const saveParticipantInterviewNotes = createAppAsyncThunk(
     {
       interviewData,
       id,
-      link,
-    }: { interviewData: InterviewCriteriaObject; id: string; link: string },
+    }: { interviewData: InterviewCriteriaObject; id: string },
     { getState, rejectWithValue }
   ) => {
     if (getState().auth.previewMode) {
@@ -105,7 +104,7 @@ export const saveParticipantInterviewNotes = createAppAsyncThunk(
     try {
       const headers = selectAuthHeader(getState())
       const req = await axios.patch(
-        link,
+        'https://semicolon-registration-backend.onrender.com/participants/interview/note',
         {
           _id: id,
           note: interviewData,

@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { fetchApplicants, fetchCommittees } from './fetchers.utils'
+import { useAppSelector } from '../../app/typings'
+import { selectAuth } from '../auth/authSlice'
 const useApplicants = () => {
   const [search, setSearch] = useState<string>('')
   const [committees, setCommittees] = useState<string[]>([])
@@ -7,16 +9,19 @@ const useApplicants = () => {
   const [filteredData, setFilteredData] = useState<any[]>([])
   const [committee, setCommittee] = useState<string>('All')
   const [status, setStatus] = useState<string>('All')
+  const { token } = useAppSelector(selectAuth)
+
   useEffect(() => {
-    const initialize = async () => {
-      const applicantsData = await fetchApplicants()
+    if (!token) return
+    const initialize = async (token: string) => {
+      const applicantsData = await fetchApplicants(token)
       setFilteredData(applicantsData)
       originalData.current = applicantsData
-      const committeesData = await fetchCommittees()
+      const committeesData = await fetchCommittees(token)
       setCommittees(committeesData)
     }
-    initialize()
-  }, [])
+    initialize(token)
+  }, [token])
   useEffect(() => {
     let temp = originalData.current
     if (search) {

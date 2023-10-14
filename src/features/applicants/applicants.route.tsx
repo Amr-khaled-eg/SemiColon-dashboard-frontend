@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import classes from '../participants/Participants/AllPars.module.css'
 import participantClasses from '../participants/Participants/Participants.module.css'
 import detailsClasses from '../participants/Participants/ParDetails.module.css'
@@ -12,7 +12,8 @@ import InterviewNotesUI from '../participants/Participants/InterviewNotesUI'
 import { useAppSelector } from '../../app/typings'
 import { selectAuth } from '../auth/authSlice'
 import useApplicants from './applicants.hooks'
-import { updateStatus } from './fetchers.utils'
+import { saveApplicantNotes, updateStatus } from './fetchers.utils'
+import { InterviewCriteriaObject } from '../participants/types/InterviewNotes'
 const ApplicantsRoute = () => {
   const {
     filteredData,
@@ -25,6 +26,7 @@ const ApplicantsRoute = () => {
   } = useApplicants()
   const [chosenApplicant, setChosenApplicant] = useState<any>()
   const { token } = useAppSelector(selectAuth)
+
   const statusChangeHandler = async (status: StatusEnum) => {
     const successed = await updateStatus(status, chosenApplicant?._id, token)
     if (!successed) {
@@ -35,6 +37,32 @@ const ApplicantsRoute = () => {
     originalData.current = originalData.current.map((item) =>
       item._id === chosenApplicant?._id
         ? { ...item, acceptanceStatus: status }
+        : item
+    )
+  }
+  const saveNotes = async ({
+    id,
+    interviewData,
+  }: {
+    id: string
+    interviewData: InterviewCriteriaObject
+  }) => {
+    const intervewNoteData = await saveApplicantNotes({
+      id,
+      interviewData,
+      token,
+    })
+    if (!intervewNoteData) {
+      alert('Something went wrong')
+      return
+    }
+    setChosenApplicant({
+      ...chosenApplicant,
+      InterviewerNote: intervewNoteData,
+    })
+    originalData.current = originalData.current.map((item) =>
+      item._id === chosenApplicant?._id
+        ? { ...item, InterviewerNote: intervewNoteData }
         : item
     )
   }
@@ -127,7 +155,8 @@ const ApplicantsRoute = () => {
           <InterviewNotesUI
             data={chosenApplicant?.InterviewerNote}
             _id={chosenApplicant?._id}
-            link="'https://semicolon-registration-backend.onrender.com/participants/interview/note'"
+            inApplicantRoute={true}
+            saveApplicantNotes={saveNotes}
           />
           <hr className={detailsClasses.line}></hr>
           <div className={detailsClasses.buttons}>
@@ -160,6 +189,12 @@ const ApplicantsRoute = () => {
               className={detailsClasses.rejectBtn}
             >
               Reject
+            </Button>
+            <Button
+              onClick={() => statusChangeHandler(StatusEnum.SECONDPREF)}
+              className={detailsClasses.passiveBtn}
+            >
+              2nd Pref
             </Button>
           </div>
         </div>

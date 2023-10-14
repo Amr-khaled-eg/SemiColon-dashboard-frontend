@@ -26,4 +26,5 @@ export enum StatusEnum {
   EMAILED = 'emailed',
   FILTERED = 'filtered',
   SCHEDULED = 'scheduled',
+  SECONDPREF = 'secondpref',
 }

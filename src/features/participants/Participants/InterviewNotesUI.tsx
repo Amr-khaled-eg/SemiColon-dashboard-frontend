@@ -1,4 +1,8 @@
-import { InterviewCriteriaEnum, InterviewObject } from '../types/InterviewNotes'
+import {
+  InterviewCriteriaEnum,
+  InterviewCriteriaObject,
+  InterviewObject,
+} from '../types/InterviewNotes'
 import classes from './InterviewNotesUI.module.css'
 import Button from '../../../common/components/Button/Button'
 import { useAppDispatch } from '../../../app/typings'
@@ -7,13 +11,21 @@ import { saveParticipantInterviewNotes } from '../participantSlice'
 interface InterviewNotesUIProps {
   data?: InterviewObject
   _id: string
-  link: string
+  inApplicantRoute?: boolean
+  saveApplicantNotes?: ({
+    id,
+    interviewData,
+  }: {
+    id: string
+    interviewData: InterviewCriteriaObject
+  }) => void
 }
 
 export default function InterviewNotesUI({
   data,
   _id,
-  link,
+  inApplicantRoute,
+  saveApplicantNotes,
 }: InterviewNotesUIProps) {
   const dispatch = useAppDispatch()
 
@@ -47,9 +59,11 @@ export default function InterviewNotesUI({
     }
 
     if (confirm('Are you sure you want to submit the interview notes?')) {
-      dispatch(
-        saveParticipantInterviewNotes({ id: _id, interviewData, link: link })
-      )
+      if (inApplicantRoute) {
+        saveApplicantNotes && saveApplicantNotes({ id: _id, interviewData })
+      } else {
+        dispatch(saveParticipantInterviewNotes({ id: _id, interviewData }))
+      }
     }
   }
 
