@@ -17,6 +17,7 @@ import { InterviewCriteriaObject } from '../participants/types/InterviewNotes'
 const ApplicantsRoute = () => {
   const {
     filteredData,
+    setFilteredData,
     search,
     setSearch,
     committees,
@@ -64,6 +65,13 @@ const ApplicantsRoute = () => {
       item._id === chosenApplicant?._id
         ? { ...item, InterviewerNote: intervewNoteData }
         : item
+    )
+    setFilteredData(
+      filteredData.map((item) =>
+        item._id === chosenApplicant?._id
+          ? { ...item, InterviewerNote: intervewNoteData }
+          : item
+      )
     )
   }
   return (

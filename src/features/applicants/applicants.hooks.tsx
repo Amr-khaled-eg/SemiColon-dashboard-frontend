@@ -46,6 +46,7 @@ const useApplicants = () => {
   }, [search, committee, status])
   return {
     filteredData,
+    setFilteredData,
     search,
     setSearch,
     committees,
