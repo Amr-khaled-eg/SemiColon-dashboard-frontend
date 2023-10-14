@@ -126,6 +126,14 @@ const ApplicantsRoute = () => {
                 {chosenApplicant?.academic_year}
               </p>
               <p>
+                <span className={detailsClasses.bold}>Department: </span>
+                {chosenApplicant?.department}
+              </p>
+              <p>
+                <span className={detailsClasses.bold}>Specialization: </span>
+                {chosenApplicant?.specialization}
+              </p>
+              <p>
                 <span className={detailsClasses.bold}>First Preference: </span>
                 {chosenApplicant?.first_preference}
               </p>
